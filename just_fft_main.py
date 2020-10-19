@@ -78,25 +78,25 @@ class Main(SoCMini, AutoCSR):
         # CRG --------------------------------------------------------------------------------------
         self.submodules.crg = _CRG(platform, sys_clk_freq)
 
-        # # Etherbone --------------------------------------------------------------------------------
-        # if with_etherbone:
-        #     self.submodules.ethphy = LiteEthPHYRGMII(
-        #         clock_pads = self.platform.request("eth_clocks"),
-        #         pads       = self.platform.request("eth"))
-        #     self.add_csr("ethphy")
-        #     self.add_etherbone(
-        #         phy         = self.ethphy,
-        #         ip_address  = ip_address,
-        #         mac_address = mac_address,
-        #     )
-        #
-        # # SPIFlash ---------------------------------------------------------------------------------
-        # self.submodules.spiflash = ECP5SPIFlash(
-        #     pads         = platform.request("spiflash"),
-        #     sys_clk_freq = sys_clk_freq,
-        #     spi_clk_freq = 5e6,
-        # )
-        # self.add_csr("spiflash")
+        # Etherbone --------------------------------------------------------------------------------
+        if with_etherbone:
+            self.submodules.ethphy = LiteEthPHYRGMII(
+                clock_pads = self.platform.request("eth_clocks"),
+                pads       = self.platform.request("eth"))
+            self.add_csr("ethphy")
+            self.add_etherbone(
+                phy         = self.ethphy,
+                ip_address  = ip_address,
+                mac_address = mac_address,
+            )
+
+        # SPIFlash ---------------------------------------------------------------------------------
+        self.submodules.spiflash = ECP5SPIFlash(
+            pads         = platform.request("spiflash"),
+            sys_clk_freq = sys_clk_freq,
+            spi_clk_freq = 5e6,
+        )
+        self.add_csr("spiflash")
 
         # GPIOs ------------------------------------------------------------------------------------
         platform.add_extension(_gpios)
@@ -107,7 +107,7 @@ class Main(SoCMini, AutoCSR):
         #self.add_csr("led")
 
         # Pulsegen RAM -----------------------------------------------------------------------------
-        self.add_ram("pgen_ram", 0x10000000, contents=[-1,-2,-3], size=1024)
+        self.add_ram("pgen_ram", 0x10000000, contents=[-1,-2,-3], size=8)
         port = self.pgen_ram.mem.get_port()
         self.specials += port
 

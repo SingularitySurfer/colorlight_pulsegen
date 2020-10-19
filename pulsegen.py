@@ -6,8 +6,8 @@ from migen import *
 from misoc.interconnect.stream import Endpoint
 from litex.soc.interconnect.csr import *
 
-from super_interpolator import SuperInterpolator
-from fft_generator_migen import Fft
+from Phaser_STFT_Pulsegen.super_interpolator import SuperInterpolator
+from Phaser_STFT_Pulsegen.fft_generator_migen import Fft
 
 
 class Pulsegen(Module, AutoCSR):
@@ -28,7 +28,7 @@ class Pulsegen(Module, AutoCSR):
 
         self.submodules.fft = fft = Fft(size_fft, True, width_d, width_d, width_d, 16, False)
 
-        self.submodules.inter = inter = SuperInterpolator(width_d, r_max)
+        self.submodules.inter = inter = SuperInterpolator(width_d, r_max, dsp_arch="lattice")
 
         self.comb += [
             fft.start.eq(go),

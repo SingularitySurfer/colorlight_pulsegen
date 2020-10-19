@@ -1,0 +1,3 @@
+[submodule "Phaser_STFT_Pulsegen"]
+	path = Phaser_STFT_Pulsegen
+	url = https://github.com/quartiq/Phaser_STFT_Pulsegen.git

@@ -1,2 +1,6 @@
-build
+  GNU nano 4.8                                .giignore                                          
+/build
+/__pycache__
+fft.vcd
+pulsegen.vcd
 

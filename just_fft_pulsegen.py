@@ -6,8 +6,8 @@ from migen import *
 from misoc.interconnect.stream import Endpoint
 from litex.soc.interconnect.csr import *
 
-from super_interpolator import SuperCicUS
-from fft_generator_migen import Fft
+from Phaser_STFT_Pulsegen.super_interpolator import SuperInterpolator
+from Phaser_STFT_Pulsegen.fft_generator_migen import Fft
 
 
 class Pulsegen(Module, AutoCSR):

@@ -22,21 +22,22 @@ class Pulsegen(Module, AutoCSR):
         ###
 
         self.go = CSRStorage(1, description="start pulsegen")
+        self.r = CSRStorage(32, description="interpolation rate", reset=200)
         pos = Signal(int(np.log2(size_fft)))
         slow = Signal(2)
         go = Signal()
 
-        self.submodules.fft = fft = Fft(size_fft, True, width_d, width_d, width_d, 16, False)
+        self.submodules.fft = fft = Fft(size_fft, True, width_d, width_d, width_d+2, 18, False)
 
         self.submodules.inter = inter = SuperInterpolator(width_d, r_max, dsp_arch="lattice")
 
         self.comb += [
-            fft.start.eq(go),
+            fft.start.eq(self.go.storage),
             fft.en.eq(1),
             fft.scaling.eq(0xff),
             fft.x_out_adr.eq(pos),
             inter.input.data.eq(fft.x_out),
-            inter.r.eq(200),
+            inter.r.eq(self.r.storage),
             #self.out0.eq(pos<<7),
             #self.out0.eq(Cat(~fft.x_out[8], fft.x_out[:7], 0x00)),
             self.out0.eq(Cat(inter.output.data0[:15], ~inter.output.data0[15])),
@@ -44,10 +45,8 @@ class Pulsegen(Module, AutoCSR):
 
         self.sync += [
             slow.eq(slow + 1),
-            fft.x_in.eq((2 ** (width_d - 3)) - 1000),
-            fft.x_in_adr.eq(1),
-            fft.x_in_we.eq(0),
-            If((slow[-1] & ~go), go.eq(1), fft.x_in_we.eq(1)),
+            #If((slow[-1] & ~go), go.eq(1)),# fft.x_in_we.eq(1)),
+            #If(self.go.storage[0], self.go.storage.eq(0)),
             If(inter.input.ack & fft.done,
                pos.eq(pos+1),
                #If(pos<70, pos.eq(70)),

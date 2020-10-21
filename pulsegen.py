@@ -46,7 +46,7 @@ class Pulsegen(Module, AutoCSR):
         self.sync += [
             slow.eq(slow + 1),
             #If((slow[-1] & ~go), go.eq(1)),# fft.x_in_we.eq(1)),
-            #If(self.go.storage[0], self.go.storage.eq(0)),
+            If(self.go.storage[0], self.go.storage.eq(0)),
             If(inter.input.ack & fft.done,
                pos.eq(pos+1),
                #If(pos<70, pos.eq(70)),
